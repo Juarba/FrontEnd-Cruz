@@ -1,3 +1,6 @@
+import React from 'react';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+
 const ActivitiesSection = () => {
   return (
     <section className="py-5 bg-light">

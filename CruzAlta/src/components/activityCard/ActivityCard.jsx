@@ -1,3 +1,6 @@
+import React from 'react';
+import { Card } from 'react-bootstrap';
+
 const ActivityCard = ({ image, title, description }) => {
   return (
     <Card className="h-100 shadow-sm">
@@ -10,7 +13,6 @@ const ActivityCard = ({ image, title, description }) => {
       </Card.Body>
     </Card>
   );
-
 };
 
 export default ActivityCard;

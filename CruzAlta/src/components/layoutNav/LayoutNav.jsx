@@ -1,5 +1,8 @@
-// Componente Header (Navbar)
-const Header = () => {
+import React from 'react';
+import { Navbar, Container, Nav } from 'react-bootstrap';
+import './LayoutNav.css';
+
+const LayoutNav = () => {
   return (
     <Navbar bg="white" expand="lg" className="shadow-sm py-3">
       <Container>
@@ -19,3 +22,5 @@ const Header = () => {
     </Navbar>
   );
 };
+
+export default LayoutNav;

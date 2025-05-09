@@ -1,3 +1,7 @@
+import React from 'react';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+import ActivityCard from '../activityCard/ActivityCard';
+
 const AboutSection = () => {
   return (
     <section className="py-5 bg-white">
