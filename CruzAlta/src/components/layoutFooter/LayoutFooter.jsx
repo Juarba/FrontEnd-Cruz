@@ -1,51 +1,80 @@
 import { Container, Row, Col } from 'react-bootstrap';
-import { FaMapMarkerAlt, FaEnvelope, FaPhone, FaFacebookF, FaTwitter, FaInstagram, FaChevronRight, FaClock } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaEnvelope, FaWhatsapp, FaFacebookF, FaTwitter, FaInstagram, FaChevronRight, FaClock } from 'react-icons/fa';
+import Map from '../map/map';
 import './LayoutFooter.css'
 const Footer = () => {
   return (
     <footer className="footer text-white py-5 w-100">
       <Container fluid>
         <Row>
-          {/* Logo e info */}
-          <Col md={4}>
-            <img src="/logo.png" alt="Logo" className="mb-3" style={{ width: 100 }} />
-            <p><FaMapMarkerAlt className="me-2" />ACA VA LA DIRECCION<br />Y ACA MAS INFO DE LA DIRECCION</p>
-            <p><FaEnvelope className="me-2" />info@gestionclub.com</p>
-            <p><FaPhone className="me-2" />telefono</p>
-          </Col>
 
           {/* Enlaces */}
-          <Col md={2}>
-            <h5 className="text-success fw-bold">Gestion Club</h5>
-            <ul className="list-unstyled">
-              <li><FaChevronRight className="me-2" />El Club</li>
-              <li><FaChevronRight className="me-2" />Servicios</li>
-              <li><FaChevronRight className="me-2" />Actividades</li>
-              <li><FaChevronRight className="me-2" />Calendario</li>
-              <li><FaChevronRight className="me-2" />Contacto</li>
-            </ul>
+          <Col md={3} className='text-start p-4'>
+            <h4 className="colortxt fw-bold">HORARIOS</h4>
+            <h6 className='colortxt fw-bold'>FINES DE SEMANA Y FERIADOS</h6>
+            <h6 className='colortxt'>NATATORIO: 10:00 A 20:00 HS</h6>
+            <h6 className='colortxt '>PREDIO: 10:00 A 02:00 HS</h6>
+            <h6 className='colortxt fw-bold'>DÍA DE SEMANA</h6>
+            <h6 className='colortxt'>NATATORIO: 10:00 A 20:00 HS</h6>
+            <h6 className='colortxt '>PREDIO: 10:00 A 01:00 HS</h6>
           </Col>
 
+          {/* Logo e info */}
+          <Col md={2} className='text-start p-4'>
+          <h4 className="colortxt ">TEMPORADAS</h4>
+          <h4 className="colortxt ">DÍA</h4>
+          <h4 className="colortxt ">DECK</h4>
+          <h4 className="colortxt ">CAMPING</h4>
+          <h4 className="colortxt ">RECORRIDO</h4>
+          </Col>
 
-
+        
           {/* Horarios y redes */}
-          <Col md={4}>
-            <h5 className="text-success fw-bold">Horarios</h5>
-            <p><FaClock className="me-2" />Laborables de 9:00 a 23:00 h.</p>
-            <p><FaClock className="me-2" />Sábados, domingos y festivos de 8:30 a 22:00 h.</p>
-            <p className="mt-4 fw-bold">SÍGUENOS EN REDES SOCIALES...</p>
-            <div className="d-flex gap-3 fs-4 justify-content-center">
-              <a href="#" className="text-white hover-icon"><FaFacebookF /></a>
-              <a href="#" className="text-white hover-icon"><FaTwitter /></a>
-              <a href="#" className="text-white hover-icon"><FaInstagram /></a>
-            </div>
+         
+          <Col md={4} className='text-start p-4'>
+          <h5 className="colortxt ">REGLAS DE CONVIVENCIA</h5>
+          <h5 className="colortxt ">POLITICAS DE PRIVACIDAD</h5>
+          <h5 className="colortxt ">TERMINOS Y CONDICIONES</h5>
+          </Col>
+
+          <Col md={3}>
+            {/* Íconos de redes sociales */}
+  <div className="mb-3">
+    <a
+      href="https://www.facebook.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="colortxt fs-4 me-3 icon-hover"
+    >
+      <FaFacebookF />
+    </a>
+    <a
+      href="https://www.instagram.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="colortxt fs-4 me-3 icon-hover"
+    >
+      <FaInstagram />
+    </a>
+    <a
+      href="https://wa.me/5490000000000"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="colortxt fs-4 icon-hover"
+    >
+      <FaWhatsapp />
+    </a>
+  </div>
+
+  {/* Mapa */}
+  <Map />
           </Col>
         </Row>
 
         <hr className="my-4 border-secondary" />
 
         <Row className="align-items-center">
-            <p className="mb-0">Copyright © 2025. All rights reserved.</p>
+            <p className="colortxt fw--bold mb-0"> © 2025. DISEÑO Y DESARROLLO IDEMCODE</p>
         </Row>
       </Container>
     </footer>

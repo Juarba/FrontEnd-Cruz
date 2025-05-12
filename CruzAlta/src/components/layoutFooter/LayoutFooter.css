@@ -1,0 +1,12 @@
+.icon-hover {
+    transition: all 0.3s ease;
+    padding: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
+  .icon-hover:hover {
+    background-color: white;
+    color: black !important;
+  }
+  
