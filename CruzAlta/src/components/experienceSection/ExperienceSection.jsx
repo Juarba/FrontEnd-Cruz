@@ -1,23 +1,27 @@
+import { Container, Row, Col, Nav, Navbar, Button, Card } from 'react-bootstrap';
+
 const ExperienceSection = () => {
   return (
-    <section className="py-5 bg-white">
+    <section className="py-5 bg-white ">
       <Container>
-        <Row className="align-items-center flex-column-reverse flex-md-row">
+        <Row className="align-items-centerflex-column-reverse flex-md-row">
           <Col md={6}>
-            <h2 className="fw-bold mb-4">UNA EXPERIENCIA DE DESCONEXIÓN INIGUALABLE</h2>
-            <p className="text-muted mb-4">
-              Sumérgete en la tranquilidad de nuestro entorno natural y desconecta 
-              del estrés diario con nuestras actividades al aire libre.
+            <h2 className="fw-bold colortxt mb-4">UNA EXPERIENCIA MEDIOAMBIENTALMENTE RESPONSABLE</h2>
+            <p className="colortxt mb-4">
+           
+            LA VIEJA BUSCA PROMOVER MÁS QUE UN DESTINO DE BIENESTAR Y DESCONEXION.
+            REFUERZA EL COMPROMISO CON UN PROFUNDO RESPETO POR EL ENTORNO. BUSCA MINIMIZAR EL IMPACTO ECOLÓGICO,
+            PROTEGIENDO SU ECOSISTEMA Y PRESERVANDO SU ESPECTACULAR RIQUEZA NATURAL.
             </p>
-            <Button variant="warning" className="rounded-pill px-4">
-              DESCUBRIR MÁS
+            <Button className="colorbutton rounded-pill px-4">
+              RESERVAR CAMPING
             </Button>
           </Col>
           <Col md={6} className="mb-4 mb-md-0">
             <img 
-              src="/woman-walking.jpg" 
+              src="/public/images/experienceboy.png" 
               alt="Experiencia única" 
-              className="img-fluid rounded shadow" 
+              className="img-fluid" 
             />
           </Col>
         </Row>
