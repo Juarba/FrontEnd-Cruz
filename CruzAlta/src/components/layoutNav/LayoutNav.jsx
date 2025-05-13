@@ -24,11 +24,11 @@ const LayoutNav = () => {
             <Nav.Link href="#descubre" className="colortxt fw-bold">CAMPING</Nav.Link>
             <Nav.Link href="#descubre" className="colortxt fw-bold">RECORRIDO</Nav.Link>
             {!isLoggedIn ? (
-              <Button variant="outline-dark" className="ms-3" onClick={handleLoginClick}>
+              <Button  className="ms-3 txtcolor colorbutton" onClick={handleLoginClick}>
                 Iniciar sesión
               </Button>
             ) : (
-              <Button variant="outline-danger" className="ms-3" onClick={handleLogoutClick}>
+              <Button  className="ms-3 txtcolor colorbutton" onClick={handleLogoutClick}>
                 Cerrar sesión
               </Button>
             )}
