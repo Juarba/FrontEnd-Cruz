@@ -9,7 +9,7 @@ import MainPage from './components/mainPage/MainPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ForgotPassword from './components/password/Password';
 import EmailVerification from './components/emailVerification/EmailVerification';
-
+import ChangePassword from './components/changePassword/ChangePassword';
 
 function App() {
   const router = createBrowserRouter([
@@ -30,6 +30,9 @@ function App() {
       },
        {path: "/email-verification",
     element: <EmailVerification/>
+      },
+       {path: "/change-password",
+    element: <ChangePassword/>
       }
   ]);
 

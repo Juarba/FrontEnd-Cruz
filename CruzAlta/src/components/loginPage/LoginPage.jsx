@@ -5,6 +5,9 @@ import './LoginPage.css';
 import { useAuth } from '../../context/AuthContext';
 import { authenticateUser } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle, faFacebookF, faApple } from '@fortawesome/free-brands-svg-icons';
+
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -25,6 +28,8 @@ const LoginPage = () => {
     }
   };
   const handleForgetPasswordClick = () => navigate('/forgot-password');
+
+  
   return (
     <div className="login-container d-flex align-items-center justify-content-center min-vh-100">
       <div className="login-box w-100" style={{ maxWidth: '400px' }}>
@@ -53,11 +58,11 @@ const LoginPage = () => {
               required
             />
             <div className="text-end mt-1">
-              <a href="" className="text-decoration-none small " onClick={handleForgetPasswordClick} >¿Olvidaste la contraseña?</a>
+              <a href="" className="colortxt text-decoration-none small " onClick={handleForgetPasswordClick} >¿Olvidaste la contraseña?</a>
             </div>
           </Form.Group>
 
-          <Button type="submit" className="btn btn-danger w-100 rounded-pill mt-3">
+          <Button type="submit" className="btn colorbutton w-100 rounded-pill mt-3">
             Iniciar sesión
           </Button>
         </Form>
@@ -74,14 +79,14 @@ const LoginPage = () => {
           <hr className="flex-grow-1" />
         </div>
 
-        <div className="d-flex justify-content-center gap-3 mb-4">
-          <img src="PATH_TO_GOOGLE_ICON" alt="Google" className="social-icon" />
-          <img src="PATH_TO_FACEBOOK_ICON" alt="Facebook" className="social-icon" />
-          <img src="PATH_TO_APPLE_ICON" alt="Apple" className="social-icon" />
-        </div>
+        <div className="d-flex justify-content-center gap-4 mb-4 fs-4">
+  <FontAwesomeIcon icon={faGoogle} className="colortxt social-icon" />
+  <FontAwesomeIcon icon={faFacebookF} className="colortxt social-icon" />
+</div>
 
-        <div className="text-center">
-          <small>¿No tienes cuenta? <a href="#" onClick={() => navigate('/register')}>Registrarse</a></small>
+
+        <div className="colortxt text-center">
+          <small>¿No tienes cuenta? <a className="colortxt" href="#" onClick={() => navigate('/register')}>Registrarse</a></small>
         </div>
       </div>
     </div>
