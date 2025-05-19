@@ -33,7 +33,7 @@ const AdminMap = () => {
   });
 
   return (
-    <MapContainer center={[-33.1106, -61.5439]} zoom={14} style={{ height: "600px", width: "100%" }}>
+    <MapContainer center={[-32.99029669632476, -61.792591957670815]} zoom={14} style={{ height: "600px", width: "100%" }}>
 
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 

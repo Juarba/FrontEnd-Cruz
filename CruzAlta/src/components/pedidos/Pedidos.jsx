@@ -13,7 +13,8 @@ import {
 } from "react-bootstrap";
 import ItemCard from "../itemCard/ItemCard";
 import { FaShoppingCart } from "react-icons/fa";
-import './Pedidos.css';
+import "./Pedidos.css";
+import Select from "react-select";
 
 const Pedidos = () => {
   const [comidas, setComidas] = useState([]);
@@ -21,6 +22,18 @@ const Pedidos = () => {
   const [pedido, setPedido] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [clientes, setClientes] = useState([]);
+  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+  const [nuevoCliente, setNuevoCliente] = useState({
+    nombre: "",
+    apellido: "",
+    direccion1: "",
+    telefono: "",
+    esProveedor: false,
+  });
+  const [mostrarFormularioCliente, setMostrarFormularioCliente] =
+    useState(false);
+
   const { role } = useAuth();
 
   const [popup, setPopup] = useState({
@@ -60,17 +73,30 @@ const Pedidos = () => {
     if (!res.ok) throw new Error("Error al cargar comidas");
     return await res.json();
   };
+  const fetchClientes = async () => {
+    const token = localStorage.getItem("jwtToken");
+    const res = await fetch("https://localhost:7042/api/Client/GetAll", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) throw new Error("Error al cargar clientes");
+    return await res.json();
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [menusData, comidasData] = await Promise.all([
+        const [menusData, comidasData, clientesData] = await Promise.all([
           fetchMenus(),
           fetchComidas(),
+          fetchClientes(),
         ]);
         setMenus(menusData);
         setComidas(comidasData);
+        setClientes(clientesData);
       } catch (err) {
         console.error("Error al cargar datos:", err);
         setError("No se pudieron cargar menús o comidas.");
@@ -103,7 +129,9 @@ const Pedidos = () => {
     }
 
     const idMenus = pedido.filter((p) => p.tipo === "menu").map((p) => p.id);
-    const idComidas = pedido.filter((p) => p.tipo === "comida").map((p) => p.id);
+    const idComidas = pedido
+      .filter((p) => p.tipo === "comida")
+      .map((p) => p.id);
 
     const now = new Date();
     const HoraEntrega = new Date(now.getTime() + 60 * 60 * 1000);
@@ -112,7 +140,7 @@ const Pedidos = () => {
       FechaPedido: now.toISOString(),
       HoraPedido: now.toISOString(),
       HoraEntrega: HoraEntrega.toISOString(),
-      idCliente: 1,
+      idCliente: clienteSeleccionado,
       idDelivery: null,
       Estado: 0,
       MetodoEntrega: 1,
@@ -155,6 +183,11 @@ const Pedidos = () => {
       </Container>
     );
 
+    const obtenerNombreCliente = (id) => {
+  const cliente = clientes.find((c) => c.idCliente === id);
+  return cliente ? `${cliente.nombre} ${cliente.apellido}` : "";
+};
+
   return (
     <Container fluid>
       <h2 className="my-4 titulo text-center">Realizar Pedido</h2>
@@ -170,7 +203,13 @@ const Pedidos = () => {
                 <Card.Body>
                   <Row>
                     {menus.map((menu) => (
-                      <Col key={menu.idMenu} xs={12} md={6} lg={4} className="mb-3">
+                      <Col
+                        key={menu.idMenu}
+                        xs={12}
+                        md={6}
+                        lg={4}
+                        className="mb-3"
+                      >
                         <ItemCard
                           item={{
                             id: menu.idMenu,
@@ -204,7 +243,13 @@ const Pedidos = () => {
                 <Card.Body>
                   <Row>
                     {comidas.map((comida) => (
-                      <Col key={comida.idComida} xs={12} md={6} lg={4} className="mb-3">
+                      <Col
+                        key={comida.idComida}
+                        xs={12}
+                        md={6}
+                        lg={4}
+                        className="mb-3"
+                      >
                         <ItemCard
                           item={{
                             id: comida.idComida,
@@ -229,14 +274,142 @@ const Pedidos = () => {
             </Col>
           </Row>
         </Col>
-
-        {/* Columna de resumen */}
         <Col md={4}>
+          <Card className="shadow mb-4 md-4 ">
+            <Card.Header className="bg-personalized text-white">
+              Seleccionar Cliente
+            </Card.Header>
+            <Card.Body>
+              <Select
+                className="mb-3"
+                options={[
+                  ...clientes.map((cliente) => ({
+                    value: cliente.idCliente,
+                    label: `${cliente.nombre} ${cliente.apellido}`,
+                  })),
+                  { value: "nuevo", label: "Agregar nuevo cliente" },
+                ]}
+                placeholder="Selecciona un cliente..."
+                onChange={(selectedOption) => {
+                  if (!selectedOption) return;
+
+                  if (selectedOption.value === "nuevo") {
+                    setMostrarFormularioCliente(true);
+                  } else {
+                    setClienteSeleccionado(selectedOption.value);
+                    setMostrarFormularioCliente(false);
+                  }
+                }}
+                value={
+                  clienteSeleccionado
+                    ? {
+                        value: clienteSeleccionado,
+                        label: obtenerNombreCliente(clienteSeleccionado),
+                      }
+                    : null
+                }
+              />
+
+              {mostrarFormularioCliente && (
+                <div className="mt-3">
+                  <input
+                    type="text"
+                    placeholder="Nombre"
+                    className="form-control mb-2"
+                    value={nuevoCliente.nombre}
+                    onChange={(e) =>
+                      setNuevoCliente({
+                        ...nuevoCliente,
+                        nombre: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Apellido"
+                    className="form-control mb-2"
+                    value={nuevoCliente.apellido}
+                    onChange={(e) =>
+                      setNuevoCliente({
+                        ...nuevoCliente,
+                        apellido: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Dirección"
+                    className="form-control mb-2"
+                    value={nuevoCliente.direccion1}
+                    onChange={(e) =>
+                      setNuevoCliente({
+                        ...nuevoCliente,
+                        direccion1: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Teléfono"
+                    className="form-control mb-2"
+                    value={nuevoCliente.telefono}
+                    onChange={(e) =>
+                      setNuevoCliente({
+                        ...nuevoCliente,
+                        telefono: e.target.value,
+                      })
+                    }
+                  />
+                  <Button
+                    className="buttoncolor"
+                    onClick={async () => {
+                      try {
+                        const token = localStorage.getItem("jwtToken");
+                        const res = await fetch(
+                          "https://localhost:7042/api/Cliente",
+                          {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                              Authorization: `Bearer ${token}`,
+                            },
+                            body: JSON.stringify(nuevoCliente),
+                          }
+                        );
+                        if (!res.ok) throw new Error(await res.text());
+
+                        const createdCliente = await res.json();
+                        showPopup("Cliente creado correctamente");
+                        setClientes([...clientes, createdCliente]);
+                        setClienteSeleccionado(createdCliente.idCliente);
+                        setMostrarFormularioCliente(false);
+                      } catch (err) {
+                        console.error(err);
+                        showPopup(
+                          "Error al crear cliente: " + err.message,
+                          "danger"
+                        );
+                      }
+                    }}
+                  >
+                    Guardar Cliente
+                  </Button>
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+
+          {/* Columna de resumen */}
+
           <Card className="shadow">
-            <Card.Header className="bg-personalized text-white">Resumen del Pedido</Card.Header>
+            <Card.Header className="bg-personalized text-white">
+              Resumen del Pedido
+            </Card.Header>
             <Card.Body style={{ maxHeight: "500px", overflowY: "auto" }}>
               {pedido.length === 0 ? (
-                <p className="text-muted">No hay comidas ni menús en el pedido.</p>
+                <p className="text-muted">
+                  No hay comidas ni menús en el pedido.
+                </p>
               ) : (
                 <ListGroup>
                   {pedido.map((item, idx) => (
@@ -266,10 +439,7 @@ const Pedidos = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <strong>Total:</strong> <span>${subtotal.toFixed(2)}</span>
               </div>
-              <Button
-                className="mt-3 w-100 colorbutton"
-                onClick={cargarPedido}
-              >
+              <Button className="mt-3 w-100 colorbutton" onClick={cargarPedido}>
                 <FaShoppingCart className="me-2" />
                 Cargar Pedido
               </Button>
