@@ -10,6 +10,8 @@ import {
   Spinner,
   Alert,
   Toast,
+  Modal,
+  Form,
 } from "react-bootstrap";
 import ItemCard from "../itemCard/ItemCard";
 import { FaShoppingCart } from "react-icons/fa";
@@ -33,6 +35,11 @@ const Pedidos = () => {
   });
   const [mostrarFormularioCliente, setMostrarFormularioCliente] =
     useState(false);
+  const [notaModal, setNotaModal] = useState({
+    show: false,
+    index: null,
+    nota: "",
+  });
 
   const { role } = useAuth();
 
@@ -122,52 +129,60 @@ const Pedidos = () => {
     return sum + item.precio;
   }, 0);
 
-  const cargarPedido = async () => {
-    if (pedido.length === 0) {
-      showPopup("Debes agregar al menos una comida o menú.", "danger");
-      return;
-    }
+ const cargarPedido = async () => {
+  if (pedido.length === 0) {
+    showPopup("Debes agregar al menos una comida o menú.", "danger");
+    return;
+  }
+  if (!clienteSeleccionado) {
+    showPopup(
+      "Debes seleccionar un cliente antes de confirmar el pedido.",
+      "danger"
+    );
+    return;
+  }
 
-    const idMenus = pedido.filter((p) => p.tipo === "menu").map((p) => p.id);
-    const idComidas = pedido
-      .filter((p) => p.tipo === "comida")
-      .map((p) => p.id);
+  const now = new Date();
+  const HoraEntrega = new Date(now.getTime() + 60 * 60 * 1000);
 
-    const now = new Date();
-    const HoraEntrega = new Date(now.getTime() + 60 * 60 * 1000);
+  const detalles = pedido.map((item) => ({
+    idMenu: item.tipo === "menu" ? item.id : null,
+    idComida: item.tipo === "comida" ? item.id : null,
+    nota: item.nota || "",
+  }));
 
-    const dto = {
-      FechaPedido: now.toISOString(),
-      HoraPedido: now.toISOString(),
-      HoraEntrega: HoraEntrega.toISOString(),
-      idCliente: clienteSeleccionado,
-      idDelivery: null,
-      Estado: 0,
-      MetodoEntrega: 1,
-      idMenus,
-      idComidas,
-    };
-
-    try {
-      const token = localStorage.getItem("jwtToken");
-      const res = await fetch("https://localhost:7042/api/Pedido/Add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(dto),
-      });
-
-      if (!res.ok) throw new Error(await res.text());
-
-      showPopup("Pedido cargado con éxito", "success");
-      setPedido([]);
-    } catch (err) {
-      console.error(err);
-      showPopup("Error al cargar el pedido: " + err.message, "danger");
-    }
+  const dto = {
+    FechaPedido: now.toISOString(),
+    HoraPedido: now.toISOString(),
+    HoraEntrega: HoraEntrega.toISOString(),
+    idCliente: clienteSeleccionado,
+    idDelivery: null,
+    Estado: 0,
+    MetodoEntrega: 1,
+    detallesPedidos: detalles,
   };
+
+  try {
+    const token = localStorage.getItem("jwtToken");
+    const res = await fetch("https://localhost:7042/api/Pedido/Add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(dto),
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+
+    showPopup("Pedido cargado con éxito", "success");
+    setPedido([]);
+  } catch (err) {
+    console.error(err);
+    showPopup("Error al cargar el pedido: " + err.message, "danger");
+  }
+};
+
 
   if (loading)
     return (
@@ -183,10 +198,24 @@ const Pedidos = () => {
       </Container>
     );
 
-    const obtenerNombreCliente = (id) => {
-  const cliente = clientes.find((c) => c.idCliente === id);
-  return cliente ? `${cliente.nombre} ${cliente.apellido}` : "";
-};
+  const obtenerNombreCliente = (id) => {
+    const cliente = clientes.find((c) => c.idCliente === id);
+    return cliente ? `${cliente.nombre} ${cliente.apellido}` : "";
+  };
+
+  const agregarNota = (index) => {
+    const notaExistente = pedido[index]?.nota || "";
+    setNotaModal({ show: true, index, nota: notaExistente });
+  };
+
+  const guardarNota = () => {
+    setPedido((prevPedido) =>
+      prevPedido.map((item, idx) =>
+        idx === notaModal.index ? { ...item, nota: notaModal.nota } : item
+      )
+    );
+    setNotaModal({ show: false, index: null, nota: "" });
+  };
 
   return (
     <Container fluid>
@@ -423,8 +452,20 @@ const Pedidos = () => {
                           ? `($${item.precio.toFixed(2)})`
                           : "(Precio no disponible)"}
                       </div>
+                      {item.nota && (
+                        <div className="text-muted small mt-1">
+                          <em>Nota: {item.nota}</em>
+                        </div>
+                      )}
                       <Button
-                        variant="outline-danger"
+                        className="colorbutton"
+                        size="sm"
+                        onClick={() => agregarNota(idx)}
+                      >
+                        Agregar Nota
+                      </Button>
+                      <Button
+                        className="colorbutton"
                         size="sm"
                         onClick={() => eliminarDelPedido(idx)}
                       >
@@ -473,6 +514,40 @@ const Pedidos = () => {
           </Toast>
         </div>
       )}
+      <Modal
+        show={notaModal.show}
+        onHide={() => setNotaModal({ show: false, index: null, nota: "" })}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Agregar Nota</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="notaInput">
+              <Form.Label>Nota para el ítem</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={notaModal.nota}
+                onChange={(e) =>
+                  setNotaModal((prev) => ({ ...prev, nota: e.target.value }))
+                }
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setNotaModal({ show: false, index: null, nota: "" })}
+          >
+            Cancelar
+          </Button>
+          <Button className="colorbutton" onClick={guardarNota}>
+            Guardar Nota
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
