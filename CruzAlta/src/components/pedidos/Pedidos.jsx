@@ -129,61 +129,60 @@ const Pedidos = () => {
     return sum + item.precio;
   }, 0);
 
- const cargarPedido = async () => {
-  if (pedido.length === 0) {
-    showPopup("Debes agregar al menos una comida o menú.", "danger");
-    return;
-  }
-  if (!clienteSeleccionado) {
-    showPopup(
-      "Debes seleccionar un cliente antes de confirmar el pedido.",
-      "danger"
-    );
-    return;
-  }
+  const cargarPedido = async () => {
+    if (pedido.length === 0) {
+      showPopup("Debes agregar al menos una comida o menú.", "danger");
+      return;
+    }
+    if (!clienteSeleccionado) {
+      showPopup(
+        "Debes seleccionar un cliente antes de confirmar el pedido.",
+        "danger"
+      );
+      return;
+    }
 
-  const now = new Date();
-  const HoraEntrega = new Date(now.getTime() + 60 * 60 * 1000);
+    const now = new Date();
+    const HoraEntrega = new Date(now.getTime() + 60 * 60 * 1000);
 
-  const detalles = pedido.map((item) => ({
-    idMenu: item.tipo === "menu" ? item.id : null,
-    idComida: item.tipo === "comida" ? item.id : null,
-    nota: item.nota || "",
-  }));
+    const detalles = pedido.map((item) => ({
+      idMenu: item.tipo === "menu" ? item.id : null,
+      idComida: item.tipo === "comida" ? item.id : null,
+      nota: item.nota || "",
+    }));
 
-  const dto = {
-    FechaPedido: now.toISOString(),
-    HoraPedido: now.toISOString(),
-    HoraEntrega: HoraEntrega.toISOString(),
-    idCliente: clienteSeleccionado,
-    idDelivery: null,
-    Estado: 0,
-    MetodoEntrega: 1,
-    detallesPedidos: detalles,
+    const dto = {
+      FechaPedido: now.toISOString(),
+      HoraPedido: now.toISOString(),
+      HoraEntrega: HoraEntrega.toISOString(),
+      idCliente: clienteSeleccionado,
+      idDelivery: null,
+      Estado: 0,
+      MetodoEntrega: 1,
+      detallesPedidos: detalles,
+    };
+
+    console.log(detalles);
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const res = await fetch("https://localhost:7042/api/Pedido/Add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(dto),
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+
+      showPopup("Pedido cargado con éxito", "success");
+      setPedido([]);
+    } catch (err) {
+      console.error(err);
+      showPopup("Error al cargar el pedido: " + err.message, "danger");
+    }
   };
-
-  console.log(detalles);
-  try {
-    const token = localStorage.getItem("jwtToken");
-    const res = await fetch("https://localhost:7042/api/Pedido/Add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(dto),
-    });
-
-    if (!res.ok) throw new Error(await res.text());
-
-    showPopup("Pedido cargado con éxito", "success");
-    setPedido([]);
-  } catch (err) {
-    console.error(err);
-    showPopup("Error al cargar el pedido: " + err.message, "danger");
-  }
-};
-
 
   if (loading)
     return (
@@ -218,6 +217,10 @@ const Pedidos = () => {
     setNotaModal({ show: false, index: null, nota: "" });
   };
 
+  const comidasActivas = comidas.filter(
+    (c) => c.activo === true || c.activo === 1
+  );
+  const menusActivos = menus.filter((m) => m.activo === true || m.activo === 1);
   return (
     <Container fluid>
       <h2 className="my-4 titulo text-center">Realizar Pedido</h2>
@@ -232,7 +235,7 @@ const Pedidos = () => {
                 </Card.Header>
                 <Card.Body>
                   <Row>
-                    {menus.map((menu) => (
+                    {menusActivos.map((menu) => (
                       <Col
                         key={menu.idMenu}
                         xs={12}
@@ -272,7 +275,7 @@ const Pedidos = () => {
                 </Card.Header>
                 <Card.Body>
                   <Row>
-                    {comidas.map((comida) => (
+                    {comidasActivas.map((comida) => (
                       <Col
                         key={comida.idComida}
                         xs={12}
@@ -290,7 +293,7 @@ const Pedidos = () => {
                           onAgregarAlPedido={() =>
                             agregarAlPedido({
                               id: comida.idComida,
-                              nombre: comida.nombre ?? "Sin nombre",
+                              nombre: comida.comida ?? "Sin nombre",
                               precio: comida.precio ?? 0,
                               tipo: "comida",
                             })
