@@ -218,20 +218,20 @@ const Pedidos = () => {
     fechaEntrega.setHours(parseInt(h), parseInt(m), 0, 0);
 
     const dto = {
-  FechaPedido: now.toISOString(),
-  HoraPedido: now.toISOString(),
-  HoraEntrega: fechaEntrega.toISOString(),
-  idCliente: clienteSeleccionado,
-  DeliveryIdUsuario: deliverySeleccionado,
-  direccionEntrega: direccionSeleccionada,
-  Estado: 0,
-  MetodoEntrega: 1,
-  detallesPedidos: pedido.map((item) => ({
-    idMenu: item.tipo === "menu" ? item.id : null,
-    idComida: item.tipo === "comida" ? item.id : null,
-    nota: item.nota || "",
-  })),
-};
+      FechaPedido: now.toISOString(),
+      HoraPedido: now.toISOString(),
+      HoraEntrega: fechaEntrega.toISOString(),
+      idCliente: clienteSeleccionado,
+      DeliveryIdUsuario: deliverySeleccionado,
+      direccionEntrega: direccionSeleccionada,
+      Estado: 1,
+      MetodoEntrega: 1,
+      detallesPedidos: pedido.map((item) => ({
+        idMenu: item.tipo === "menu" ? item.id : null,
+        idComida: item.tipo === "comida" ? item.id : null,
+        nota: item.nota || "",
+      })),
+    };
 
     try {
       const token = localStorage.getItem("jwtToken");
@@ -517,77 +517,81 @@ const Pedidos = () => {
             </Modal.Footer>
           </Modal>
           <Modal
-  show={modalDireccionesVisible}
-  onHide={() => setModalDireccionesVisible(false)}
-  centered
->
-  <Modal.Header closeButton>
-    <Modal.Title>Direcciones del Cliente</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form.Group>
-      <Form.Label>Direcciones registradas:</Form.Label>
-      <div className="mb-2">
-        {direccionesCliente.length > 0 ? (
-          direccionesCliente.map((dir, idx) => (
-            <Form.Check
-              key={idx}
-              type="radio"
-              name="direccion"
-              label={dir}
-              value={dir}
-              checked={direccionSeleccionada === dir}
-              onChange={() => setDireccionSeleccionada(dir)}
-            />
-          ))
-        ) : (
-          <p className="text-muted">No hay direcciones registradas.</p>
-        )}
-      </div>
-    </Form.Group>
+            show={modalDireccionesVisible}
+            onHide={() => setModalDireccionesVisible(false)}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Direcciones del Cliente</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group>
+                <Form.Label>Direcciones registradas:</Form.Label>
+                <div className="mb-2">
+                  {direccionesCliente.length > 0 ? (
+                    direccionesCliente.map((dir, idx) => (
+                      <Form.Check
+                        key={idx}
+                        type="radio"
+                        name="direccion"
+                        label={dir}
+                        value={dir}
+                        checked={direccionSeleccionada === dir}
+                        onChange={() => setDireccionSeleccionada(dir)}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-muted">
+                      No hay direcciones registradas.
+                    </p>
+                  )}
+                </div>
+              </Form.Group>
 
-    <hr />
+              <hr />
 
-    <Form.Group className="mt-2">
-      <Form.Label>Agregar nueva dirección:</Form.Label>
-      <Form.Control
-        type="text"
-        placeholder="Nueva dirección"
-        value={nuevaDireccion}
-        onChange={(e) => setNuevaDireccion(e.target.value)}
-      />
-      <Button
-        className="mt-2 colorbutton"
-        onClick={() => {
-          if (nuevaDireccion.trim() !== "") {
-            const nuevas = [...direccionesCliente, nuevaDireccion.trim()];
-            setDireccionesCliente(nuevas);
-            setDireccionSeleccionada(nuevaDireccion.trim());
-            setNuevaDireccion("");
-          }
-        }}
-      >
-        Añadir dirección
-      </Button>
-    </Form.Group>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button
-      variant="secondary"
-      onClick={() => setModalDireccionesVisible(false)}
-    >
-      Cancelar
-    </Button>
-    <Button
-      className="colorbutton"
-      onClick={() => setModalDireccionesVisible(false)}
-      disabled={!direccionSeleccionada}
-    >
-      Confirmar dirección
-    </Button>
-  </Modal.Footer>
-</Modal>
-
+              <Form.Group className="mt-2">
+                <Form.Label>Agregar nueva dirección:</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Nueva dirección"
+                  value={nuevaDireccion}
+                  onChange={(e) => setNuevaDireccion(e.target.value)}
+                />
+                <Button
+                  className="mt-2 colorbutton"
+                  onClick={() => {
+                    if (nuevaDireccion.trim() !== "") {
+                      const nuevas = [
+                        ...direccionesCliente,
+                        nuevaDireccion.trim(),
+                      ];
+                      setDireccionesCliente(nuevas);
+                      setDireccionSeleccionada(nuevaDireccion.trim());
+                      setNuevaDireccion("");
+                    }
+                  }}
+                >
+                  Añadir dirección
+                </Button>
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setModalDireccionesVisible(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                className="colorbutton"
+                onClick={() => setModalDireccionesVisible(false)}
+                disabled={!direccionSeleccionada}
+              >
+                Confirmar dirección
+              </Button>
+            </Modal.Footer>
+          </Modal>
 
           {/* DELIVERY + HORARIO en misma fila (con botones iguales y toggle para delivery) */}
           <Row className="mb-3">
