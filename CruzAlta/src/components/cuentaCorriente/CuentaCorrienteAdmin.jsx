@@ -1,7 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Container, Form, Table, Alert, Spinner, Button } from "react-bootstrap";
-import  Select from "react-select";
- 
+import {
+  Container,
+  Form,
+  Table,
+  Alert,
+  Spinner,
+  Button,
+  Modal,
+  Row,
+  Col,
+} from "react-bootstrap";
+import Select from "react-select";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 const CuentaCorrienteAdmin = () => {
   const [clientes, setClientes] = useState([]);
   const [clienteSeleccionado, setClienteSeleccionado] = useState("");
@@ -10,6 +22,12 @@ const CuentaCorrienteAdmin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [tieneCuenta, setTieneCuenta] = useState(true);
+
+  const [mostrarResumen, setMostrarResumen] = useState(false);
+  const [resumen, setResumen] = useState({ debe: 0, haber: 0 });
+
+  const [fechaDesde, setFechaDesde] = useState(null);
+  const [fechaHasta, setFechaHasta] = useState(null);
 
   const baseUrl = "https://localhost:7042/api";
 
@@ -40,8 +58,14 @@ const CuentaCorrienteAdmin = () => {
       const token = localStorage.getItem("jwtToken");
       const headers = { Authorization: `Bearer ${token}` };
 
-      const resMov = await fetch(`${baseUrl}/CuentaCorriente/movimientos/${idCliente}`, { headers });
-      const resSaldo = await fetch(`${baseUrl}/CuentaCorriente/saldo/${idCliente}`, { headers });
+      const resMov = await fetch(
+        `${baseUrl}/CuentaCorriente/movimientos/${idCliente}`,
+        { headers }
+      );
+      const resSaldo = await fetch(
+        `${baseUrl}/CuentaCorriente/saldo/${idCliente}`,
+        { headers }
+      );
 
       if (!resMov.ok || !resSaldo.ok) {
         setTieneCuenta(false);
@@ -69,18 +93,54 @@ const CuentaCorrienteAdmin = () => {
       const token = localStorage.getItem("jwtToken");
       const headers = { Authorization: `Bearer ${token}` };
 
-      const res = await fetch(`${baseUrl}/CuentaCorriente/crear/${clienteSeleccionado}`, {
-        method: "POST",
-        headers,
-      });
+      const res = await fetch(
+        `${baseUrl}/CuentaCorriente/crear/${clienteSeleccionado}`,
+        {
+          method: "POST",
+          headers,
+        }
+      );
 
       if (!res.ok) throw new Error("No se pudo crear la cuenta");
 
       alert("Cuenta creada exitosamente.");
-      handleChangeCliente({ target: { value: clienteSeleccionado } }); // refrescar datos
+      handleChangeCliente({ target: { value: clienteSeleccionado } });
     } catch (err) {
       alert("Error: " + err.message);
     }
+  };
+
+  const calcularResumen = () => {
+    let debe = 0;
+    let haber = 0;
+
+    movimientos.forEach((m) => {
+      if (m.esHaber) haber += m.monto;
+      else debe += m.monto;
+    });
+
+    setResumen({ debe, haber });
+    setMostrarResumen(true);
+  };
+
+  const exportarPDF = () => {
+    if (!clienteSeleccionado) return;
+    if (fechaDesde && fechaHasta && fechaDesde > fechaHasta) {
+      alert("La fecha desde no puede ser mayor a la fecha hasta.");
+      return;
+    }
+
+    const token = localStorage.getItem("jwtToken");
+
+    const params = new URLSearchParams();
+    if (fechaDesde) params.append("desde", fechaDesde.toISOString());
+    if (fechaHasta) params.append("hasta", fechaHasta.toISOString());
+    params.append("token", token);
+
+    window.open(
+      `${baseUrl}/CuentaCorriente/exportar-pdf/${clienteSeleccionado}?${params.toString()}`,
+      "_blank"
+    );
   };
 
   return (
@@ -88,18 +148,23 @@ const CuentaCorrienteAdmin = () => {
       <h3>Cuenta Corriente de Clientes</h3>
 
       <Form.Group controlId="clienteSelect" className="my-3">
-  <Form.Label>Seleccionar cliente</Form.Label>
-  <Select
-    value={clientes.find(c => c.idCliente === clienteSeleccionado) || null}
-    onChange={(opcion) => handleChangeCliente({ target: { value: opcion.value } })}
-    options={clientes.map((c) => ({
-      value: c.idCliente,
-      label: `${c.nombre} ${c.apellido}`
-    }))}
-    placeholder="-- Seleccione --"
-    isClearable
-  />
-</Form.Group>
+        <Form.Label>Seleccionar cliente</Form.Label>
+        <Select
+          value={
+            clientes.find((c) => c.idCliente === clienteSeleccionado) || null
+          }
+          onChange={(opcion) =>
+            handleChangeCliente({ target: { value: opcion.value } })
+          }
+          options={clientes.map((c) => ({
+            value: c.idCliente,
+            label: `${c.nombre} ${c.apellido}`,
+          }))}
+          placeholder="-- Seleccione --"
+          isClearable
+        />
+      </Form.Group>
+
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
 
@@ -120,6 +185,12 @@ const CuentaCorrienteAdmin = () => {
         </Alert>
       )}
 
+      {tieneCuenta && movimientos.length > 0 && (
+        <Button variant="info" className="mb-3" onClick={calcularResumen}>
+          Ver Resumen
+        </Button>
+      )}
+
       {tieneCuenta && (
         <Table bordered hover>
           <thead className="table-dark">
@@ -133,7 +204,9 @@ const CuentaCorrienteAdmin = () => {
           <tbody>
             {movimientos.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center">Sin movimientos</td>
+                <td colSpan={4} className="text-center">
+                  Sin movimientos
+                </td>
               </tr>
             ) : (
               movimientos.map((mov, idx) => (
@@ -148,6 +221,80 @@ const CuentaCorrienteAdmin = () => {
           </tbody>
         </Table>
       )}
+
+      {/* Modal Resumen */}
+      <Modal show={mostrarResumen} onHide={() => setMostrarResumen(false)} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Resumen de Cuenta Corriente</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Row className="mb-3">
+            <Col>
+              <Form.Label>Desde</Form.Label>
+              <DatePicker
+                selected={fechaDesde}
+                onChange={(date) => setFechaDesde(date)}
+                className="form-control"
+                placeholderText="Fecha desde"
+                dateFormat="yyyy-MM-dd"
+              />
+            </Col>
+            <Col>
+              <Form.Label>Hasta</Form.Label>
+              <DatePicker
+                selected={fechaHasta}
+                onChange={(date) => setFechaHasta(date)}
+                className="form-control"
+                placeholderText="Fecha hasta"
+                dateFormat="yyyy-MM-dd"
+              />
+            </Col>
+            <Col className="d-flex align-items-end">
+              <Button variant="secondary" onClick={exportarPDF}>
+                Exportar PDF
+              </Button>
+            </Col>
+          </Row>
+          <Table bordered>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Descripción</th>
+                <th>Debe</th>
+                <th>Haber</th>
+              </tr>
+            </thead>
+            <tbody>
+              {movimientos.map((mov, idx) => (
+                <tr key={idx}>
+                  <td>{new Date(mov.fecha).toLocaleDateString()}</td>
+                  <td>{mov.descripcion}</td>
+                  <td>{!mov.esHaber ? `$${mov.monto.toFixed(2)}` : "-"}</td>
+                  <td>{mov.esHaber ? `$${mov.monto.toFixed(2)}` : "-"}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colSpan="2">Totales</th>
+                <th>${resumen.debe.toFixed(2)}</th>
+                <th>${resumen.haber.toFixed(2)}</th>
+              </tr>
+              <tr>
+                <th colSpan="2">Saldo final</th>
+                <th colSpan="2" className={resumen.haber - resumen.debe >= 0 ? "text-success" : "text-danger"}>
+                  ${ (resumen.haber - resumen.debe).toFixed(2) }
+                </th>
+              </tr>
+            </tfoot>
+          </Table>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setMostrarResumen(false)}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
