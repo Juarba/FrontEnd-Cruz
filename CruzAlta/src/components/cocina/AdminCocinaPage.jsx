@@ -34,6 +34,7 @@ useEffect(() => {
         },
       });
       setFilas(res.data);
+      console.log(res.data);
     } catch (err) {
       console.error("Error al obtener pedidos", err);
       setError("Error al cargar los pedidos.");
@@ -59,6 +60,21 @@ useEffect(() => {
     }
   };
 
+  useEffect(() => {
+  const interval = setInterval(() => {
+    fetchPedidos();
+  }, 5000); // cada 10 segundos refresco pagina automaticamente.
+  
+
+  return () => clearInterval(interval); // limpiar al desmontar
+}, []);
+const obtenerNombreMetodoPago = (valor) => {
+  if (valor === "EfectivoTransferencia") return "Efectivo / Transferencia";
+  if (valor === "CuentaCorriente") return "Cuenta Corriente";
+  return "-";
+};
+
+
   return (
     <div style={{ padding: "2rem" }}>
       <h2>Órdenes en Cocina - Administrador</h2>
@@ -74,35 +90,36 @@ useEffect(() => {
               <th>Cantidad</th>
               <th>Menú</th>
               <th>Hora de Entrega</th>
-              <th>Observaciones</th>
+              <th>Metodo de pago</th>
               <th>Acción</th>
             </tr>
           </thead>
           <tbody>
-            {filas.map((fila) => (
-              <tr key={fila.idDetalle}>
-                <td className="text-center">{fila.cliente}</td>
-                <td>{fila.cantidad}</td>
-                <td>{fila.menu}</td>
-                <td>
-                  {new Date(fila.horaEntrega).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </td>
-                <td>{fila.nota || "-"}</td>
-                <td>
-                  <Button
-                    variant="success"
-                    size="sm"
-                    onClick={() => marcarDetalleComoListo(fila.idDetalle)}
-                  >
-                    Marcar como Listo
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+  {filas.map((fila) => (
+    <tr key={fila.idDetalle}>
+      <td className="text-center">{fila.cliente}</td>
+      <td>{fila.cantidad}</td>
+      <td>{fila.menu}</td>
+      <td>
+        {new Date(fila.horaEntrega).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </td>
+      <td>{obtenerNombreMetodoPago(fila.metodoPago)}</td>
+      <td>
+        <Button
+          variant="success"
+          size="sm"
+          onClick={() => marcarDetalleComoListo(fila.idDetalle)}
+        >
+          Marcar como Listo
+        </Button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </Table>
       )}
     </div>
