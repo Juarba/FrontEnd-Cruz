@@ -53,6 +53,8 @@ const Pedidos = () => {
   const [direccionesCliente, setDireccionesCliente] = useState([]);
   const [direccionSeleccionada, setDireccionSeleccionada] = useState(null);
   const [nuevaDireccion, setNuevaDireccion] = useState("");
+  const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = useState(null);
+
   const navigate = useNavigate();
 
   const generarOpcionesHorario = () => {
@@ -232,12 +234,14 @@ const Pedidos = () => {
       direccionEntrega: direccionSeleccionada,
       Estado: 1,
       MetodoEntrega: 1,
+      MetodoPago: metodoPagoSeleccionado,
       detallesPedidos: pedido.map((item) => ({
         idMenu: item.tipo === "menu" ? item.id : null,
         idComida: item.tipo === "comida" ? item.id : null,
         nota: item.nota || "",
       })),
     };
+    console.log(dto);
 
     try {
       const token = localStorage.getItem("jwtToken");
@@ -523,6 +527,77 @@ const Pedidos = () => {
               </Button>
             </Modal.Footer>
           </Modal>
+          <Row className="mb-3">
+  <Col xs={12}>
+    <Card className="shadow">
+      <Card.Header className="bg-personalized text-white">
+        Metodo de Pago
+      </Card.Header>
+      <Card.Body>
+        <Select
+  options={[
+    { value: 1, label: "Efectivo / Transferencia" },
+    { value: 2, label: "Cuenta Corriente" },
+  ]}
+  placeholder="Seleccionar método de pago..."
+  onChange={async (option) => {
+    if (!option) return;
+
+    // Si eligió cuenta corriente (2), verificar si el cliente tiene
+    if (option.value === 2) {
+      if (!clienteSeleccionado) {
+        showPopup("Debes seleccionar un cliente antes de elegir cuenta corriente", "danger");
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem("jwtToken");
+        const res = await fetch(
+          `https://localhost:7042/api/CuentaCorriente/existe/${clienteSeleccionado}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!res.ok) throw new Error("No se pudo verificar la cuenta corriente");
+        const tieneCuenta = await res.json();
+
+        if (!tieneCuenta) {
+          showPopup("El cliente no tiene cuenta corriente activa", "danger");
+          setMetodoPagoSeleccionado(null);
+          return;
+        }
+      } catch (err) {
+        showPopup("Error al verificar cuenta corriente", "danger");
+        setMetodoPagoSeleccionado(null);
+        return;
+      }
+    }
+
+    // Si todo bien, o es efectivo:
+    setMetodoPagoSeleccionado(option.value);
+  }}
+  value={
+    metodoPagoSeleccionado
+      ? {
+          value: metodoPagoSeleccionado,
+          label:
+            metodoPagoSeleccionado === 1
+              ? "Efectivo / Transferencia"
+              : "Cuenta Corriente",
+        }
+      : null
+  }
+/>
+
+      </Card.Body>
+    </Card>
+  </Col>
+</Row>
+
           <Modal
             show={modalDireccionesVisible}
             onHide={() => setModalDireccionesVisible(false)}
