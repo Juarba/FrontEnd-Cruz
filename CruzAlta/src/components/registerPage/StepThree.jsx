@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Button } from "react-bootstrap";
 import "./registerCss/StepThree.css";
+import { API_URL } from "../../services/api.js";
 
 const StepThree = ({ formData, setFormData, onNext, onBack }) => {
     const handleChange = (e) => {

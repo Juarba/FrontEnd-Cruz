@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "./registerCss/StepConfirm.css";
+import { API_URL } from "../../services/api.js";
 
 const StepConfirm = () => {
     const navigate = useNavigate();

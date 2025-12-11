@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Table, Button, Spinner, Alert } from "react-bootstrap";
 import "./CocinaPage.css";
-
+import { API_URL } from "../../services/api.js";
 const AdminCocinaPage = () => {
   const [filas, setFilas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mensaje, setMensaje] = useState(null);
 
-  const apiUrl = "https://localhost:7042/api/Pedido/cocina";
+  const apiUrl = `${API_URL}/Pedido/cocina`;
   const marcarDetalleListoUrl =
-    "https://localhost:7042/api/Pedido/marcar-detalle-listo"; // NUEVO ENDPOINT
+    `${API_URL}/Pedido/marcar-detalle-listo`; // NUEVO ENDPOINT
 useEffect(() => {
   if (mensaje) {
     const timer = setTimeout(() => {

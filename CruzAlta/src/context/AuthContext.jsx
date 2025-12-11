@@ -1,6 +1,8 @@
 // src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { API_URL } from "../services/api.js";
+
 import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
 
@@ -39,7 +41,7 @@ export const AuthProvider = ({ children }) => {
       async (position) => {
         try {
           await axios.post(
-            "https://localhost:7042/api/ubicacion/update",
+            `${API_URL}/ubicacion/update`,
             {
               latitud: position.coords.latitude,
               longitud: position.coords.longitude,

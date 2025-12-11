@@ -9,6 +9,7 @@ import {
   Table,
   Button,
 } from "react-bootstrap";
+import { API_URL } from "../../services/api.js";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +24,7 @@ const ResumenCaja = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const apiUrl = "https://localhost:7042/api/Caja";
+  const apiUrl = `${API_URL}/Caja`;
 
   const fetchCaja = async () => {
     try {

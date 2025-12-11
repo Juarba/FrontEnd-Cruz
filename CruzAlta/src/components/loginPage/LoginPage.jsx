@@ -3,9 +3,12 @@ import { Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LoginPage.css';
 import { useAuth } from '../../context/AuthContext';
-import { authenticateUser } from '../../services/api';
+
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';// 🔁 Asegurate de tener esto instalado: npm install jwt-decode
+
+import { API_URL, authenticateUser } from '../../services/api';
+
 
 const LoginPage = () => {
   const { login } = useAuth();

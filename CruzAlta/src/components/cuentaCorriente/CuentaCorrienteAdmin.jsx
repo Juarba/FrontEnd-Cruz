@@ -16,7 +16,7 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import './CuantaCorriente.css';
-
+import { API_URL } from "../../services/api.js";
 
 
 const CuentaCorrienteAdmin = () => {
@@ -49,7 +49,7 @@ const mostrarToast = (message, variant = "success") => {
 };
 
 
-  const baseUrl = "https://localhost:7042/api";
+  const baseUrl = `${API_URL}`;
 
   useEffect(() => {
     const fetchClientes = async () => {

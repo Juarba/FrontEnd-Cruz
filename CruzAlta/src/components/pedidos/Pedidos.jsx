@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_URL } from "../../services/api.js";
 import { useAuth } from "../../context/AuthContext";
 import {
   Container,
@@ -84,7 +85,7 @@ const Pedidos = () => {
 
   const fetchMenus = async () => {
     const token = localStorage.getItem("jwtToken");
-    const res = await fetch("https://localhost:7042/api/Menus", {
+    const res = await fetch(`${API_URL}/Menus`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -96,7 +97,7 @@ const Pedidos = () => {
 
   const fetchComidas = async () => {
     const token = localStorage.getItem("token");
-    const res = await fetch("https://localhost:7042/api/Comidas/GetAll", {
+    const res = await fetch(`${API_URL}/Comidas/GetAll`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -111,7 +112,7 @@ const Pedidos = () => {
 
     // 1. Obtener clientes normales
     const resClientes = await fetch(
-      "https://localhost:7042/api/Client/GetAll",
+      `${API_URL}/Client/GetAll`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -126,7 +127,7 @@ const Pedidos = () => {
 
     // 2. Obtener deliverys activos
     const resDeliverys = await fetch(
-      "https://localhost:7042/api/DeliveryActivo",
+      `${API_URL}/DeliveryActivo`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -245,7 +246,7 @@ const Pedidos = () => {
 
     try {
       const token = localStorage.getItem("jwtToken");
-      const res = await fetch("https://localhost:7042/api/Pedido/Add", {
+      const res = await fetch(`${API_URL}/Pedido/Add`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -307,7 +308,7 @@ const Pedidos = () => {
     try {
       const token = localStorage.getItem("jwtToken");
       const res = await fetch(
-        `https://localhost:7042/api/Client/${idCliente}/direcciones`,
+        `${API_URL}/Client/${idCliente}/direcciones`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -487,7 +488,7 @@ const Pedidos = () => {
                   try {
                     const token = localStorage.getItem("jwtToken");
                     const res = await fetch(
-                      "https://localhost:7042/api/Client/Add",
+                      `${API_URL}/Client/Add`,
                       {
                         method: "POST",
                         headers: {
@@ -553,7 +554,7 @@ const Pedidos = () => {
       try {
         const token = localStorage.getItem("jwtToken");
         const res = await fetch(
-          `https://localhost:7042/api/CuentaCorriente/existe/${clienteSeleccionado}`,
+          `${API_URL}/CuentaCorriente/existe/${clienteSeleccionado}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

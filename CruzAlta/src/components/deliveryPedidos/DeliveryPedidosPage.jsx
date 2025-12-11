@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Accordion, Button, Spinner, Alert } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
+import { API_URL } from "../../services/api.js";
 
 const DeliveryPedidosPage = () => {
   const { user } = useAuth();
@@ -10,7 +11,7 @@ const DeliveryPedidosPage = () => {
 
   const fetchPedidos = async () => {
     try {
-      const res = await fetch(`https://localhost:7042/api/PedidoDelivery/${user.id}`, {
+      const res = await fetch(`${API_URL}/PedidoDelivery/${user.id}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
@@ -36,7 +37,7 @@ const DeliveryPedidosPage = () => {
   const marcarEntregado = async (idPedido) => {
   try {
     setLoading(true); // opcional: mostrar spinner
-    const response = await fetch(`https://localhost:7042/api/PedidoDelivery/entregar/${idPedido}`, {
+    const response = await fetch(`${API_URL}/PedidoDelivery/entregar/${idPedido}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${user.token}`,

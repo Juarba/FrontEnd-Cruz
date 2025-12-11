@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Table, Spinner, Container, Button } from "react-bootstrap";
-
+import { API_URL } from "../../services/api.js";
 const ProveedorComprasPage = () => {
   const { idProveedor } = useParams();
   const [compras, setCompras] = useState([]);
@@ -11,7 +11,7 @@ const ProveedorComprasPage = () => {
   useEffect(() => {
     const fetchCompras = async () => {
       try {
-        const res = await fetch(`https://localhost:7042/api/Proveedor/detalles/${idProveedor}`, {
+        const res = await fetch(`${API_URL}/Proveedor/detalles/${idProveedor}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, // si usás JWT
           },

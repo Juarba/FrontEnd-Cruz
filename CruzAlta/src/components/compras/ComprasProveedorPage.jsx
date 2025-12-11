@@ -1,6 +1,7 @@
 // src/components/compras/ComprasProveedorPage.jsx
 import React, { useState, useEffect } from "react";
 import { Container, Form, Button, Alert, Row, Col } from "react-bootstrap";
+import { API_URL } from "../../services/api.js";
 
 const ComprasProveedorPage = () => {
   const [proveedores, setProveedores] = useState([]);
@@ -15,7 +16,7 @@ const ComprasProveedorPage = () => {
   useEffect(() => {
     const fetchProveedores = async () => {
       try {
-        const res = await fetch("https://localhost:7042/api/Proveedor", {
+        const res = await fetch(`${API_URL}/Proveedor`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -35,7 +36,7 @@ const ComprasProveedorPage = () => {
     setMensaje(null);
 
     try {
-      const response = await fetch("https://localhost:7042/api/CompraProveedor", {
+      const response = await fetch(`${API_URL}/CompraProveedor`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

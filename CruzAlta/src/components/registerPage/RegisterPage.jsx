@@ -3,6 +3,7 @@ import StepOne from './StepOne';
 import StepTwo from './StepTwo';
 import StepThree from './StepThree';
 import StepConfirm from './StepConfirm';
+import { API_URL } from "../../services/api.js";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({

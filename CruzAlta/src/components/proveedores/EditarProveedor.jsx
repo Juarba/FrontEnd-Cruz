@@ -10,6 +10,7 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
+import { API_URL } from "../../services/api.js";
 
 const EditarProveedor = () => {
   const { id } = useParams();
@@ -32,7 +33,7 @@ const EditarProveedor = () => {
   const getProveedor = async () => {
     try {
       const token = localStorage.getItem("jwtToken");
-      const res = await fetch(`https://localhost:7042/api/Proveedor/${id}`, {
+      const res = await fetch(`${API_URL}/Proveedor/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -60,7 +61,7 @@ const EditarProveedor = () => {
   const fetchClientes = async () => {
     try {
       const token = localStorage.getItem("jwtToken");
-      const res = await fetch("https://localhost:7042/api/Client/GetAll", {
+      const res = await fetch(`${API_URL}/Client/GetAll`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error(await res.text());
@@ -89,7 +90,7 @@ const EditarProveedor = () => {
 
     try {
       const token = localStorage.getItem("jwtToken");
-      const res = await fetch(`https://localhost:7042/api/Proveedor/${id}`, {
+      const res = await fetch(`${API_URL}/Proveedor/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

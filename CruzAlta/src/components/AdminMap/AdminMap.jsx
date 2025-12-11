@@ -4,7 +4,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import motoIcon from "../../assets/delivery-bike.png";
-
+import { API_URL } from "../../services/api.js";
 
 const AdminMap = () => {
   const [locations, setLocations] = useState([]);
@@ -22,7 +22,7 @@ const AdminMap = () => {
 });
   const fetchLocations = async () => {
     try {
-      const res = await axios.get("https://localhost:7042/api/ubicacion/all", {
+      const res = await axios.get(`${API_URL}/ubicacion/all`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`
         }

@@ -10,6 +10,7 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../services/api.js";
 
 const CrearProveedor = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const CrearProveedor = () => {
     const fetchClientes = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
-        const res = await fetch("https://localhost:7042/api/Client/GetAll", {
+        const res = await fetch(`${API_URL}/Client/GetAll`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -60,7 +61,7 @@ const CrearProveedor = () => {
         }
 
         const res = await fetch(
-          `https://localhost:7042/api/Proveedor/crear-desde-cliente/${idClienteSeleccionado}`,
+          `${API_URL}/Proveedor/crear-desde-cliente/${idClienteSeleccionado}`,
           {
             method: "POST",
             headers: {
@@ -71,7 +72,7 @@ const CrearProveedor = () => {
         if (!res.ok) throw new Error(await res.text());
       } else {
         // modo === "manual"
-        const res = await fetch("https://localhost:7042/api/Proveedor", {
+        const res = await fetch(`${API_URL}/Proveedor`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -12,6 +12,7 @@ import {
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import './Proveedores.css'
+import { API_URL } from "../../services/api.js";
 const ProveedoresPage = () => {
   const [proveedores, setProveedores] = useState([]);
   const [filtroNombre, setFiltroNombre] = useState("");
@@ -25,7 +26,7 @@ const ProveedoresPage = () => {
     const fetchProveedores = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
-        const res = await fetch("https://localhost:7042/api/Proveedor", {
+        const res = await fetch(`${API_URL}/Proveedor`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -137,7 +138,7 @@ const ProveedoresPage = () => {
 
                           try {
                             const token = localStorage.getItem("jwtToken");
-                            const res = await fetch(`https://localhost:7042/api/Proveedor/${p.idProveedor}`, {
+                            const res = await fetch(`${API_URL}/Proveedor/${p.idProveedor}`, {
                               method: "DELETE",
                               headers: {
                                 Authorization: `Bearer ${token}`,

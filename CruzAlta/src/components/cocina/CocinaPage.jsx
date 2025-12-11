@@ -3,13 +3,14 @@ import axios from "axios";
 import { Table, Spinner, Alert } from "react-bootstrap";
 /*estilos */ 
 import './CocinaPage.css'; 
+import { API_URL } from "../../services/api.js";
 
 const CocinaPage = () => {
   const [filas, setFilas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const apiUrl = "https://localhost:7042/api/Pedido/cocina";
+  const apiUrl = `${API_URL}/Pedido/cocina`;
 
   useEffect(() => {
     fetchPedidos();

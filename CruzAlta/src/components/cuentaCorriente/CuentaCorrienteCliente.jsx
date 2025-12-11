@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Spinner, Alert, Table } from "react-bootstrap";
+import { API_URL } from "../../services/api.js";
 
 const CuentaCorrienteCliente = () => {
   const [movimientos, setMovimientos] = useState([]);
@@ -8,7 +9,7 @@ const CuentaCorrienteCliente = () => {
   const [error, setError] = useState(null);
   const [tieneCuenta, setTieneCuenta] = useState(true);
 
-  const apiMovimientos = "https://localhost:7042/api/CuentaCorriente/movimientos";
+  const apiMovimientos = `${API_URL}/CuentaCorriente/movimientos`;
 
   useEffect(() => {
     const fetchData = async () => {

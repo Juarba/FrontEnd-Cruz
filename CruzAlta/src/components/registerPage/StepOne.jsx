@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import "./registerCss/StepOne.css";
+import { API_URL } from "../../services/api.js";
 
 const StepOne = ({ formData, setFormData, onNext }) => {
     const navigate = useNavigate();

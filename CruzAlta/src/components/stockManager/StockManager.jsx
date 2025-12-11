@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_URL } from "../../services/api.js";
 import {
   Table,
   FormControl,
@@ -87,8 +88,8 @@ const [nuevaComida, setNuevaComida] = useState({
 
       try {
         const [comidasRes, menusRes] = await Promise.all([
-          fetch("https://localhost:7042/api/Comidas/GetAll", { headers }),
-          fetch("https://localhost:7042/api/Menus", { headers }),
+          fetch(`${API_URL}/Comidas/GetAll`, { headers }),
+          fetch(`${API_URL}/Menus`, { headers }),
         ]);
 
         const comidasData = comidasRes.ok ? await comidasRes.json() : [];
@@ -129,8 +130,8 @@ const [nuevaComida, setNuevaComida] = useState({
     const body = JSON.stringify({ id, nuevoStock });
     const endpoint =
       tipo === "comida"
-        ? `https://localhost:7042/api/Comidas/actualizar-stock/${id}`
-        : `https://localhost:7042/api/Menus/actualizar-stock/${id}`;
+        ? `${API_URL}/Comidas/actualizar-stock/${id}`
+        : `${API_URL}/Menus/actualizar-stock/${id}`;
 
     try {
       const resp = await fetch(endpoint, { method: "PUT", headers, body });
@@ -156,8 +157,8 @@ const [nuevaComida, setNuevaComida] = useState({
 
   const endpoint =
     tipo === "comida"
-      ? `https://localhost:7042/api/Comidas/Delete/${id}`
-      : `https://localhost:7042/api/Menus/${id}`;;
+      ? `${API_URL}/Comidas/Delete/${id}`
+      : `${API_URL}/Menus/${id}`;;
 
   try {
     const resp = await fetch(endpoint, { method: "DELETE", headers });
@@ -166,8 +167,8 @@ const [nuevaComida, setNuevaComida] = useState({
 
       // actualizar data
       const [comidasRes, menusRes] = await Promise.all([
-        fetch("https://localhost:7042/api/Comidas/GetAll", { headers }),
-        fetch("https://localhost:7042/api/Menus", { headers }),
+        fetch(`${API_URL}/Comidas/GetAll`, { headers }),
+        fetch(`${API_URL}/Menus`, { headers }),
       ]);
       if (comidasRes.ok) setComidas(await comidasRes.json());
       if (menusRes.ok) setMenus(await menusRes.json());
@@ -189,8 +190,8 @@ const [nuevaComida, setNuevaComida] = useState({
 
     const endpoint =
       tipo === "comida"
-        ? `https://localhost:7042/api/Comidas/toggle-activo/${id}`
-        : `https://localhost:7042/api/Menus/toggle-activo/${id}`;
+        ? `${API_URL}/Comidas/toggle-activo/${id}`
+        : `${API_URL}/Menus/toggle-activo/${id}`;
 
     try {
       const resp = await fetch(endpoint, { method: "PUT", headers });
@@ -198,8 +199,8 @@ const [nuevaComida, setNuevaComida] = useState({
         showToast(`${tipo} ${id} ahora está ${!estadoActual ? "activo" : "inactivo"}`, "success");
 
         // recargar data
-        const comidasRes = await fetch("https://localhost:7042/api/Comidas/GetAll", { headers });
-        const menusRes = await fetch("https://localhost:7042/api/Menus", { headers });
+        const comidasRes = await fetch(`${API_URL}/Comidas/GetAll`, { headers });
+        const menusRes = await fetch(`${API_URL}/Menus`, { headers });
         if (comidasRes.ok) setComidas(await comidasRes.json());
         if (menusRes.ok) setMenus(await menusRes.json());
       } else {
@@ -224,7 +225,7 @@ const [nuevaComida, setNuevaComida] = useState({
     };
 
     try {
-      const resp = await fetch("https://localhost:7042/api/Menus", {
+      const resp = await fetch(`${API_URL}/Menus`, {
         method: "POST",
         headers,
         body: JSON.stringify(nuevoMenu),
@@ -234,7 +235,7 @@ const [nuevaComida, setNuevaComida] = useState({
         showToast("Menú creado correctamente", "success");
         setNuevoMenu(formularioMenuVacio);
         setShowModal(false);
-        const menusResp = await fetch("https://localhost:7042/api/Menus", { headers });
+        const menusResp = await fetch(`${API_URL}/Menus`, { headers });
         if (menusResp.ok) {
           const nuevosMenus = await menusResp.json();
           setMenus(nuevosMenus);
@@ -273,7 +274,7 @@ const [nuevaComida, setNuevaComida] = useState({
   };
 
   try {
-    const resp = await fetch("https://localhost:7042/api/Comidas/Add", {
+    const resp = await fetch(`${API_URL}/Comidas/Add`, {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -292,7 +293,7 @@ const [nuevaComida, setNuevaComida] = useState({
       showToast("Comida creada correctamente", "success");
       setNuevaComida(formularioComidaVacio);  
       setShowComidaModal(false);
-      const comidasResp = await fetch("https://localhost:7042/api/Comidas/GetAll", { headers });
+      const comidasResp = await fetch(`${API_URL}/Comidas/GetAll`, { headers });
       if (comidasResp.ok) setComidas(await comidasResp.json());
     } else {
       showToast("Error al crear comida", "danger");
@@ -553,7 +554,7 @@ const [nuevaComida, setNuevaComida] = useState({
       let payload = {};
 
       if (editandoTipo === "comida") {
-        endpoint = `https://localhost:7042/api/Comidas/Update/${editandoItem.idComida}`;
+        endpoint = `${API_URL}/Comidas/Update/${editandoItem.idComida}`;
         payload = {
           comida: editandoItem.comida,
           codComida: editandoItem.codComida ?? 0,
@@ -561,7 +562,7 @@ const [nuevaComida, setNuevaComida] = useState({
           precio: 0 // si tu backend lo requiere
         };
       } else {
-        endpoint = `https://localhost:7042/api/Menus/${editandoItem.idMenu}`;
+        endpoint = `${API_URL}/Menus/${editandoItem.idMenu}`;
         payload = {
           idMenu: editandoItem.idMenu,
           nombre: editandoItem.nombre,
@@ -587,8 +588,8 @@ const [nuevaComida, setNuevaComida] = useState({
           setShowEditarModal(false);
 
           const [comidasRes, menusRes] = await Promise.all([
-            fetch("https://localhost:7042/api/Comidas/GetAll", { headers }),
-            fetch("https://localhost:7042/api/Menus", { headers }),
+            fetch(`${API_URL}/Comidas/GetAll`, { headers }),
+            fetch(`${API_URL}/Menus`, { headers }),
           ]);
 
           const comidasData = comidasRes.ok ? await comidasRes.json() : [];

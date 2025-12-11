@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ComidaCard from './ComidaCard';
+import { API_URL } from "../../services/api.js";
 
 const ListaComidas = () => {
   const [comidas, setComidas] = useState([]);
@@ -9,7 +10,7 @@ const ListaComidas = () => {
     const fetchComidas = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const response = await fetch('https://localhost:7042/api/Comidas/GetAll', {
+        const response = await fetch(`${API_URL}/Comidas/GetAll`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

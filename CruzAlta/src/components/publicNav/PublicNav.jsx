@@ -1,7 +1,7 @@
 // components/layoutNav/PublicNav.jsx
 import { Navbar, Container, Nav, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
+import { API_URL } from "../../services/api.js";
 const PublicNav = () => {
   const navigate = useNavigate();
 

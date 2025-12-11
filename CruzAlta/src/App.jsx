@@ -25,6 +25,7 @@ import StockManager from './components/stockManager/StockManager';
 import ProveedorComprasPage from "./components/proveedores/ProveedorComprasPage";
 import CocinaPage from "./components/cocina/CocinaPage";
 import AdminCocinaPage from "./components/cocina/AdminCocinaPage";
+import RegisterPage from "./components/registerPage/RegisterPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -92,6 +93,15 @@ function App() {
       element: (
         <Layout>
           <ResumenCaja />
+        </Layout>
+      )
+    },
+
+    {
+      path: "/register",
+      element: (
+        <Layout>
+          <RegisterPage />
         </Layout>
       )
     },
